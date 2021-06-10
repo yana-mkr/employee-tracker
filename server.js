@@ -193,38 +193,25 @@ function addEmployee() {
 }
 
 function updateEmployee() {
-    const roleChoice = [];
-    db.query(`SELECT * FROM role`, (err, result) => {
-        if (err) {
-            console.log(err)
-        }
-        for (let i = 0; i < result.length; i++) {
-            roleChoice.push({
-                name: result[i].title,
-                value: result[i].id
-            })
-        }
-    });
-    const employeeChoice = [];
     db.query(`SELECT * FROM employee`, (err, result) => {
         if (err) {
             console.log(err)
         }
-        for (let i = 0; i < result.length; i++) {
-            employeeChoice.push({
-                name: result[i].first,
-                value: result[i].id
-            })
-        }
-    });
-    inquirer.prompt(
-        {
-            type: 'list',
-            name: 'employee',
-            message: "Which employee would you like to update?",
-            choices: employeeChoice
-        }
-    )
+        inquirer.prompt(
+            {
+                type: 'list',
+                name: 'employee',
+                message: "Which employee would you like to update?",
+                choices() {
+                    const employeeChoice = [];
+                    result.forEach(({ first_name }) => {
+                        employeeChoice.push(first_name)
+                    });
+                    return employeeChoice
+                }
+            }
+        )
+    })
 }
 
 appStart();
